@@ -61,9 +61,28 @@ const getAllMoviesWithRatings = (req, res, next) => {
     });
 };
 
+const getMovieByGenre = (req, res, next) => {
+  let genId = parseInt(req.params.id);
+  db.any(
+    "SELECT movies.id, image, name, titles FROM movies JOIN genres ON  movies.genre_id = genres.id WHERE genres.id = $1 GROUP BY movies.id, image, name",
+    [genId]
+  )
+    .then(data => {
+      res.status(200).json({
+        status: "Success",
+        data: data,
+        message: "THE GENRE IS!"
+      });
+    })
+    .catch(err => {
+      return next(err);
+    });
+};
+
 module.exports = {
   getOneMovie,
   getAllMovies,
   getAllMovieInfo,
-  getAllMoviesWithRatings
+  getAllMoviesWithRatings,
+  getMovieByGenre
 };
